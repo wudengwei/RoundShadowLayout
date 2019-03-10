@@ -10,8 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView设置背景色，遮盖背景阴影色"
-        android:textSize="16sp"
-        android:layout_marginTop="25dp"/>
+        android:textSize="16sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,6 +79,45 @@
             app:bottomLeftRadius="50dp"
             app:topRightRadius="50dp"
             app:shadowRadius="10dp"
+            app:shadowColor="#EE00BB00"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="30dp">
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                android:textSize="16sp"/>
+        </com.wudengwei.roundshadowlayout.widget.RoundShadowLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="不设置阴影"
+        android:textSize="16sp"
+        android:layout_marginTop="25dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.wudengwei.roundshadowlayout.widget.RoundShadowLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:radius="100dp"
+            app:shadowColor="#EEBB0000"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="30dp">
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                android:textSize="16sp"/>
+        </com.wudengwei.roundshadowlayout.widget.RoundShadowLayout>
+
+        <com.wudengwei.roundshadowlayout.widget.RoundShadowLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bottomLeftRadius="50dp"
+            app:topRightRadius="50dp"
             app:shadowColor="#EE00BB00"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="30dp">
