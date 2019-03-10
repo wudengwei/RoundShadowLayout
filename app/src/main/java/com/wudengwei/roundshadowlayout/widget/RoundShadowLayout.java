@@ -83,9 +83,6 @@ public class RoundShadowLayout extends FrameLayout {
         radiusArray[7] = bottomLeftRadius;
         //裁剪圆角的画笔
         roundPaint = new Paint();
-        roundPaint.setColor(Color.WHITE);
-        roundPaint.setAntiAlias(true);
-        roundPaint.setStyle(Paint.Style.FILL);
         //圆角矩形的路径
         roundPath = new Path();
         //包含圆角矩形的路径的layer区域
@@ -97,13 +94,11 @@ public class RoundShadowLayout extends FrameLayout {
         shadowPath = new Path();
         //阴影画笔
         shadowPaint = new Paint();
-        shadowPaint.setAntiAlias(true);
-        shadowPaint.setStyle(Paint.Style.FILL);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         // 测量子view的最大宽高
         int width = 0;
         int height = 0;
@@ -166,6 +161,10 @@ public class RoundShadowLayout extends FrameLayout {
     private void clipRound(Canvas canvas) {
         roundPath.reset();
         roundPath.addRoundRect(roundRect, radiusArray, Path.Direction.CW);
+        //画笔设置
+        roundPaint.setColor(Color.WHITE);
+        roundPaint.setAntiAlias(true);
+        roundPaint.setStyle(Paint.Style.FILL);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
             roundPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
             canvas.drawPath(roundPath, roundPaint);
@@ -188,7 +187,6 @@ public class RoundShadowLayout extends FrameLayout {
     //添加阴影bitmap
     private Bitmap createShadowBitmap(int shadowWidth, int shadowHeight, float shadowRadius,
                                       float dx, float dy, int shadowColor) {
-
         Bitmap output = Bitmap.createBitmap(shadowWidth, shadowHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
@@ -210,6 +208,8 @@ public class RoundShadowLayout extends FrameLayout {
             shadowRect.right -= Math.abs(dx);
         }
 
+        shadowPaint.setAntiAlias(true);
+        shadowPaint.setStyle(Paint.Style.FILL);
         shadowPaint.setColor(shadowColor);
         if (!isInEditMode()) {
             shadowPaint.setShadowLayer(shadowRadius, dx, dy, shadowColor);
