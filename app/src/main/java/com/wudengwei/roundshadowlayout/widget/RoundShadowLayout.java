@@ -133,7 +133,6 @@ public class RoundShadowLayout extends FrameLayout {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        Log.e("WFrameLayout","onLayout");
         for (int i=0;i<getChildCount();i++) {
             View child = getChildAt(i);
             MarginLayoutParams lp = (MarginLayoutParams) child
