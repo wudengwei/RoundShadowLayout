@@ -3,4 +3,4 @@
 
 效果图
 
-![imgae](https://github.com/wudengwei/RoundShadowLayout/raw/master/imgs/1.jpg)
+![imgae](https://github.com/wudengwei/RoundShadowLayout/raw/master/imgs/1.png)
