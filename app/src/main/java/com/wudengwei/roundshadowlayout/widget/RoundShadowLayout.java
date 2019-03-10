@@ -130,6 +130,7 @@ public class RoundShadowLayout extends FrameLayout {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        if(w > 0 && h > 0 && shadowRadius > 0) {
             //设置阴影背景
             setBackgroundCompat(w, h);
         }
