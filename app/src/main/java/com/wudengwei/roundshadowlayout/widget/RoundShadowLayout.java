@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.wudengwei.roundshadowlayout.R;
@@ -68,6 +69,11 @@ public class RoundShadowLayout extends FrameLayout {
             shadowColor = ta.getColor(R.styleable.RoundShadowLayout_shadowColor, 0x88757575);
             shadow_x = ta.getDimension(R.styleable.RoundShadowLayout_shadow_x, 0);
             shadow_y = ta.getDimension(R.styleable.RoundShadowLayout_shadow_y, 0);
+            //统一shadowRadius
+            if (shadowRadius > 0) {
+                int temp = (int) (shadowRadius + 0.5);
+                shadowRadius = temp;
+            }
             ta.recycle();
         }
         radiusArray[0] = topLeftRadius;
@@ -105,20 +111,26 @@ public class RoundShadowLayout extends FrameLayout {
         for (int i=0;i<getChildCount();i++) {
             View child = getChildAt(i);
             //测量子View的宽高,measureChild最终调用child.measure(w,h)
-            measureChild(child,widthMeasureSpec,heightMeasureSpec);
-            MarginLayoutParams lp = (MarginLayoutParams) child
+            final ViewGroup.LayoutParams lp = child.getLayoutParams();
+            final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec-(int) (shadowRadius)*2,
+                    getPaddingLeft() + getPaddingRight(), lp.width);
+            final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec-(int) (shadowRadius)*2,
+                    getPaddingTop() + getPaddingBottom(), lp.height);
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+
+            MarginLayoutParams mlp = (MarginLayoutParams) child
                     .getLayoutParams();
-            int childWidth = child.getMeasuredWidth() + lp.leftMargin
-                    + lp.rightMargin;
-            int childHeight = child.getMeasuredHeight() + lp.topMargin
-                    + lp.bottomMargin;
+            int childWidth = child.getMeasuredWidth() + mlp.leftMargin
+                    + mlp.rightMargin;
+            int childHeight = child.getMeasuredHeight() + mlp.topMargin
+                    + mlp.bottomMargin;
             width = Math.max(width, childWidth);
             height = Math.max(height, childHeight);
         }
         //如果使用阴影，则宽高加上阴影
         setMeasuredDimension(
-                width + getPaddingLeft() + getPaddingRight() + (int) (shadowRadius+0.5)*2,
-                height + getPaddingTop() + getPaddingBottom() + (int) (shadowRadius+0.5)*2
+                width + getPaddingLeft() + getPaddingRight() + (int) (shadowRadius)*2,
+                height + getPaddingTop() + getPaddingBottom() + (int) (shadowRadius)*2
         );
     }
 
@@ -137,8 +149,8 @@ public class RoundShadowLayout extends FrameLayout {
             View child = getChildAt(i);
             MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
-            int lc = (int) (shadowRadius + 0.5) + lp.leftMargin;
-            int tc = (int) (shadowRadius + 0.5) + lp.topMargin;
+            int lc = (int) (shadowRadius) + lp.leftMargin + getPaddingLeft();
+            int tc = (int) (shadowRadius) + lp.topMargin + getPaddingTop();
             int rc = lc + child.getMeasuredWidth();
             int bc = tc + child.getMeasuredHeight();
             child.layout(lc, tc, rc, bc);
@@ -171,7 +183,9 @@ public class RoundShadowLayout extends FrameLayout {
             roundPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             final Path path = new Path();
             path.addRect(0, 0, getWidth(), getHeight(), Path.Direction.CW);
-            path.op(roundPath, Path.Op.DIFFERENCE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                path.op(roundPath, Path.Op.DIFFERENCE);
+            }
             canvas.drawPath(path, roundPaint);
         }
     }
