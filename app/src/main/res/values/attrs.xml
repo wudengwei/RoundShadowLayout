@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="RoundShadowLayout">
         <!-- width / height = ratio（float类型） -->
-        <attr name="ratio" format="float" />
+        <!--<attr name="ratio" format="float" />-->
         <!-- 圆角半径（dp、px等等） -->
         <attr name="radius" format="dimension" />
         <attr name="topLeftRadius" format="dimension" />
