@@ -116,7 +116,6 @@ public class RoundShadowLayout extends FrameLayout {
                     0, lp.width);
             final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec-(int) (shadowRadius)*2,
                     0, lp.height);
-            //child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             measureChild(child,childWidthMeasureSpec, childHeightMeasureSpec);
 
             MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
