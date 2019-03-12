@@ -113,17 +113,15 @@ public class RoundShadowLayout extends FrameLayout {
             //测量子View的宽高,measureChild最终调用child.measure(w,h)
             final ViewGroup.LayoutParams lp = child.getLayoutParams();
             final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec-(int) (shadowRadius)*2,
-                    getPaddingLeft() + getPaddingRight(), lp.width);
+                    0, lp.width);
             final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec-(int) (shadowRadius)*2,
-                    getPaddingTop() + getPaddingBottom(), lp.height);
-            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                    0, lp.height);
+            //child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            measureChild(child,childWidthMeasureSpec, childHeightMeasureSpec);
 
-            MarginLayoutParams mlp = (MarginLayoutParams) child
-                    .getLayoutParams();
-            int childWidth = child.getMeasuredWidth() + mlp.leftMargin
-                    + mlp.rightMargin;
-            int childHeight = child.getMeasuredHeight() + mlp.topMargin
-                    + mlp.bottomMargin;
+            MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
+            int childWidth = child.getMeasuredWidth() + mlp.leftMargin + mlp.rightMargin;
+            int childHeight = child.getMeasuredHeight() + mlp.topMargin + mlp.bottomMargin;
             width = Math.max(width, childWidth);
             height = Math.max(height, childHeight);
         }
@@ -147,8 +145,7 @@ public class RoundShadowLayout extends FrameLayout {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         for (int i=0;i<getChildCount();i++) {
             View child = getChildAt(i);
-            MarginLayoutParams lp = (MarginLayoutParams) child
-                    .getLayoutParams();
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             int lc = (int) (shadowRadius) + lp.leftMargin + getPaddingLeft();
             int tc = (int) (shadowRadius) + lp.topMargin + getPaddingTop();
             int rc = lc + child.getMeasuredWidth();
