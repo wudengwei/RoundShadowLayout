@@ -3,6 +3,10 @@
     <declare-styleable name="RoundShadowLayout">
         <!-- width / height = ratio（float类型） -->
         <!--<attr name="ratio" format="float" />-->
+        <!-- 边框宽度（dp、px等等） -->
+        <attr name="strokeWidth" format="dimension" />
+        <!-- 边框颜色（资源ID\颜色值）-->
+        <attr name="strokeColor" format="color" />
         <!-- 圆角半径（dp、px等等） -->
         <attr name="radius" format="dimension" />
         <attr name="topLeftRadius" format="dimension" />

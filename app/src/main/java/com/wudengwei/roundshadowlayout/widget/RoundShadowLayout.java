@@ -42,6 +42,10 @@ public class RoundShadowLayout extends FrameLayout {
     private RectF roundRect;//包含圆角矩形的路径的layer区域
     private Path roundPath;//圆角矩形的路径
 
+    private float strokeWidth = 0;//边框宽度
+    private Paint strokePaint;//边框画笔
+    private int strokeColor;//边框颜色
+
     public RoundShadowLayout(@NonNull Context context) {
         this(context,null);
     }
@@ -65,15 +69,12 @@ public class RoundShadowLayout extends FrameLayout {
             topRightRadius = ta.getDimension(R.styleable.RoundShadowLayout_topRightRadius, radius);
             bottomLeftRadius = ta.getDimension(R.styleable.RoundShadowLayout_bottomLeftRadius, radius);
             bottomRightRadius = ta.getDimension(R.styleable.RoundShadowLayout_bottomRightRadius, radius);
-            shadowRadius = ta.getDimension(R.styleable.RoundShadowLayout_shadowRadius, 0);
+            strokeWidth = ta.getDimensionPixelSize(R.styleable.RoundShadowLayout_strokeWidth, 0);
+            strokeColor = ta.getColor(R.styleable.RoundShadowLayout_strokeColor, 0x88000000);
+            shadowRadius = ta.getDimensionPixelSize(R.styleable.RoundShadowLayout_shadowRadius, 0);
             shadowColor = ta.getColor(R.styleable.RoundShadowLayout_shadowColor, 0x88757575);
             shadow_x = ta.getDimension(R.styleable.RoundShadowLayout_shadow_x, 0);
             shadow_y = ta.getDimension(R.styleable.RoundShadowLayout_shadow_y, 0);
-            //统一shadowRadius
-            if (shadowRadius > 0) {
-                int temp = (int) (shadowRadius + 0.5);
-                shadowRadius = temp;
-            }
             ta.recycle();
         }
         radiusArray[0] = topLeftRadius;
@@ -87,6 +88,9 @@ public class RoundShadowLayout extends FrameLayout {
 
         radiusArray[6] = bottomLeftRadius;
         radiusArray[7] = bottomLeftRadius;
+//        for (int i=0;i<radiusArray.length;i++) {
+//            Log.e("radiusArray",""+radiusArray[i]);
+//        }
         //裁剪圆角的画笔
         roundPaint = new Paint();
         //圆角矩形的路径
@@ -100,6 +104,9 @@ public class RoundShadowLayout extends FrameLayout {
         shadowPath = new Path();
         //阴影画笔
         shadowPaint = new Paint();
+
+        //边框画笔
+        strokePaint = new Paint();
     }
 
     @Override
@@ -155,19 +162,71 @@ public class RoundShadowLayout extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        //使用canvas.saveLayer()配合roundPaint.setXfermode裁剪圆角区域
-        roundRect.set(shadowRadius,shadowRadius,getWidth()- shadowRadius,getHeight()- shadowRadius);
-        canvas.saveLayer(roundRect, null, Canvas.ALL_SAVE_FLAG);
-        super.dispatchDraw(canvas);
-        //裁剪圆角区域
-        clipRound(canvas);
-        canvas.restore();
+        if (radiusArray[0] == 0 && radiusArray[2] == 0 && radiusArray[4] == 0 && radiusArray[6] == 0) {
+            super.dispatchDraw(canvas);
+        } else {
+            //使用canvas.saveLayer()配合roundPaint.setXfermode裁剪圆角区域
+            roundRect.set(shadowRadius,shadowRadius,getWidth()-shadowRadius,getHeight()-shadowRadius);
+            canvas.saveLayer(roundRect, null, Canvas.ALL_SAVE_FLAG);
+            super.dispatchDraw(canvas);
+            roundPath.reset();
+            roundPath.addRoundRect(roundRect, radiusArray, Path.Direction.CW);
+            //画边框
+            drawStroke(canvas);
+            //裁剪圆角区域
+            clipRound(canvas);
+            canvas.restore();
+        }
+    }
+
+    //画边框
+    private void drawStroke(Canvas canvas) {
+        if (strokeWidth > 0) {
+//            float strokeRadius = strokeWidth;
+//            float[] strokeArray = new float[8];
+//            if (radiusArray[0] > strokeRadius) {
+//                strokeArray[0] = radiusArray[0]-strokeRadius;
+//                strokeArray[1] = radiusArray[1]-strokeRadius;
+//            }
+//            if (radiusArray[2] > strokeRadius) {
+//                strokeArray[2] = radiusArray[2]-strokeRadius;
+//                strokeArray[3] = radiusArray[3]-strokeRadius;
+//            }
+//            if (radiusArray[4] > strokeRadius) {
+//                strokeArray[4] = radiusArray[4]-strokeRadius;
+//                strokeArray[5] = radiusArray[5]-strokeRadius;
+//            }
+//            if (radiusArray[6] > strokeRadius) {
+//                strokeArray[6] = radiusArray[6]-strokeRadius;
+//                strokeArray[7] = radiusArray[7]-strokeRadius;
+//            }
+//            RectF strokeRect = new RectF(shadowRadius+strokeRadius,shadowRadius+strokeRadius,getWidth()-shadowRadius-strokeRadius,getHeight()-shadowRadius-strokeRadius);
+//            Path strokePath = new Path();
+//            strokePath.addRoundRect(strokeRect, strokeArray, Path.Direction.CW);
+//            //画笔设置
+//            strokePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+//            strokePaint.setColor(strokeColor);
+//            strokePaint.setAntiAlias(true);
+//            strokePaint.setStyle(Paint.Style.FILL);
+//            canvas.drawPath(roundPath, strokePaint);
+
+            // 支持半透明描边，将与描边区域重叠的内容裁剪掉
+            strokePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+            strokePaint.setAntiAlias(true);
+            strokePaint.setColor(strokeColor);
+            strokePaint.setStrokeWidth(strokeWidth * 2);
+            strokePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawPath(roundPath, strokePaint);
+            // 绘制描边
+            strokePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+            strokePaint.setColor(strokeColor);
+            strokePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawPath(roundPath, strokePaint);
+        }
     }
 
     //裁剪圆角区域
     private void clipRound(Canvas canvas) {
-        roundPath.reset();
-        roundPath.addRoundRect(roundRect, radiusArray, Path.Direction.CW);
         //画笔设置
         roundPaint.setColor(Color.WHITE);
         roundPaint.setAntiAlias(true);
@@ -194,8 +253,7 @@ public class RoundShadowLayout extends FrameLayout {
     }
 
     //添加阴影bitmap
-    private Bitmap createShadowBitmap(int shadowWidth, int shadowHeight, float shadowRadius,
-                                      float dx, float dy, int shadowColor) {
+    private Bitmap createShadowBitmap(int shadowWidth, int shadowHeight, float shadowRadius, float dx, float dy, int shadowColor) {
         Bitmap output = Bitmap.createBitmap(shadowWidth, shadowHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
