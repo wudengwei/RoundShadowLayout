@@ -162,21 +162,21 @@ public class RoundShadowLayout extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        //使用canvas.saveLayer()配合roundPaint.setXfermode裁剪圆角区域
+        roundRect.set(shadowRadius,shadowRadius,getWidth()-shadowRadius,getHeight()-shadowRadius);
+        canvas.saveLayer(roundRect, null, Canvas.ALL_SAVE_FLAG);
+        super.dispatchDraw(canvas);
+        roundPath.reset();
+        roundPath.addRoundRect(roundRect, radiusArray, Path.Direction.CW);
+        //画边框
+        drawStroke(canvas);
         if (radiusArray[0] == 0 && radiusArray[2] == 0 && radiusArray[4] == 0 && radiusArray[6] == 0) {
-            super.dispatchDraw(canvas);
+
         } else {
-            //使用canvas.saveLayer()配合roundPaint.setXfermode裁剪圆角区域
-            roundRect.set(shadowRadius,shadowRadius,getWidth()-shadowRadius,getHeight()-shadowRadius);
-            canvas.saveLayer(roundRect, null, Canvas.ALL_SAVE_FLAG);
-            super.dispatchDraw(canvas);
-            roundPath.reset();
-            roundPath.addRoundRect(roundRect, radiusArray, Path.Direction.CW);
-            //画边框
-            drawStroke(canvas);
             //裁剪圆角区域
             clipRound(canvas);
-            canvas.restore();
         }
+        canvas.restore();
     }
 
     //画边框
